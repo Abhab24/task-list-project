@@ -67,7 +67,7 @@ tasksDOM.addEventListener('click', async (e) => {
 
 formDOM.addEventListener('submit', async (e) => {
   e.preventDefault()
-  const name = taskInputDOM.value
+  const name = taskInputDOM.value//listening for submit event
 
   try {
     await axios.post('/api/v1/tasks', { name })
