@@ -1,16 +1,14 @@
-//CONTROLLER FOR ROUTES IN TASKS.JS
+//CONTROLLER FOR ROUTES IN TASKS.JS (all route handlers)
 //collection of Cb fns (logics of funtions) of all the routers
 
 const Task = require("../models/task");
-const getAllTasks = async (req, res) => {
+const asyncWrapper= require('../middleware/async');
+
+const getAllTasks = asyncWrapper( async (req, res) => {
   //for GET request
-  try {
     const tasks = await Task.find({}); //task object
     res.status(201).json({ tasks });
-  } catch (error) {
-    res.status(500).json({ msg: error });
-  }
-};
+});
 
 const createTask = async (req, res) => {
   //POST

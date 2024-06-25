@@ -4,7 +4,10 @@ const express = require("express");
 const app = express();
 const tasks = require("./Routes/tasks"); //importing a router handler
 const connectDB = require("./db/connect");
+const notFound = require("./middleware/not-found");
 require('dotenv').config();
+const notFound= require('./middleware/not-found');
+const errorHandlerMiddleware= require('./middleware/error-handler');
 
 //Middlewares
 // when we will be creating a new task we will be passing JSON data from our application to the server via POST request,the JSON data is included in the body of the HTTP request
@@ -16,6 +19,9 @@ app.use(express.json());
 //accessing the route from route handler using use fn
 //app.use(path for which we want this route,route_name)
 app.use("/api/v1/tasks", tasks);
+
+app.use(notFound);
+app.use(errorHandlerMiddleware);
 
 const port = 3000;
 
