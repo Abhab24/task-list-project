@@ -2,12 +2,13 @@
 //collection of Cb fns (logics of funtions) of all the routers
 
 const Task = require("../models/task");
-const asyncWrapper= require('../middleware/async');
+const asyncWrapper = require("../middleware/async");
+const {createCustomError}= require('../Errors/custom-error')
 
-const getAllTasks = asyncWrapper( async (req, res) => {
+const getAllTasks = asyncWrapper(async (req, res) => {
   //for GET request
-    const tasks = await Task.find({}); //task object
-    res.status(201).json({ tasks });
+  const tasks = await Task.find({}); //task object
+  res.status(201).json({ tasks });
 });
 
 const createTask = async (req, res) => {
@@ -20,14 +21,14 @@ const createTask = async (req, res) => {
   }
 };
 
-const getTask = async (req, res) => {
+const getTask = async (req, res,next) => {
   //GET
   try {
     const { id: taskID } = req.params;
     const task = await Task.findOne({ _id: taskID });
     if (!task) {
+      return next(createCustomError (`No task with id:{taskID}`,404 ));
       //if no item in db has matchong id
-      return res.status(404).json({ msg: "no task with id:{taskID" });
     }
     res.status(200).json({ task });
   } catch (error) {
@@ -40,13 +41,13 @@ const updateTask = async (req, res) => {
   //PUT
   try {
     const { id: taskID } = req.params;
-    const task = await Task.findOneAndUpdate({ _id: taskID }, req.body,{
-      new:true,
-      runValidators:true,
+    const task = await Task.findOneAndUpdate({ _id: taskID }, req.body, {
+      new: true,
+      runValidators: true,
     });
     if (!task) {
       //if no item in db has matchong id
-      return res.status(404).json({ msg: "no task with id:{taskID" });
+      return next(createCustomError (`No task with id:{taskID}`,404 ));
     }
     res.status(200).json({ task });
   } catch (error) {
@@ -62,7 +63,7 @@ const deleteTask = async (req, res) => {
     const task = await Task.findOneAndDelete({ _id: taskID });
     if (!task) {
       //if no item in db has matchong id
-      return res.status(404).json({ msg: "no task with id:{taskID" });
+      return next(createCustomError (`No task with id:{taskID}`,404 ));
     }
     res.status(200).json({ task });
   } catch (error) {
